@@ -42,3 +42,41 @@ func (h *ProjectHandler) GetProjects(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, projectRes)
 }
+
+func (h *ProjectHandler) GetProject(ctx echo.Context) error {
+	id := ctx.Param("id")
+	projectRes, err := h.projectService.GetProject(ctx.Request().Context(), id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "error getting project handler")
+	}
+
+	return ctx.JSON(http.StatusOK, projectRes)
+}
+
+func (h *ProjectHandler) UpdateProject(ctx echo.Context) error {
+	id := ctx.Param("id")
+
+	var project models.ProjectUpdateDTO
+	if err := ctx.Bind(&project); err != nil {
+		return echo.NewHTTPError(http.StatusUnprocessableEntity, "cannot bind")
+	}
+	if err := ctx.Validate(project); err != nil {
+		return echo.NewHTTPError(http.StatusUnprocessableEntity, fmt.Sprintf("error validating project: %v", err))
+	}
+
+	projectRes, err := h.projectService.UpdateProject(ctx.Request().Context(), id, project)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "error updating project handler")
+	}
+	return ctx.JSON(http.StatusOK, projectRes)
+}
+
+func (h *ProjectHandler) DeleteProject(ctx echo.Context) error {
+	id := ctx.Param("id")
+
+	err := h.projectService.DeleteProject(ctx.Request().Context(), id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "error deleting project handler")
+	}
+	return ctx.NoContent(http.StatusNoContent)
+}
