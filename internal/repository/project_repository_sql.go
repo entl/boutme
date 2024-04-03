@@ -36,3 +36,39 @@ func (repository *SqlProjectRepository) GetProjects(ctx context.Context) ([]data
 
 	return projects, nil
 }
+
+func (repository *SqlProjectRepository) GetProject(ctx context.Context, id string) (database.Project, error) {
+	projectId, err := uuid.Parse(id)
+	if err != nil {
+		fmt.Println("error parsing project id: ", err)
+		return database.Project{}, err
+	}
+
+	project, err := repository.db.GetProjectByID(ctx, projectId)
+	if err != nil {
+		fmt.Println("error getting project rep: ", err)
+		return database.Project{}, err
+	}
+
+	return project, nil
+}
+
+func (repository *SqlProjectRepository) UpdateProject(ctx context.Context, projectParams database.UpdateProjectParams) (database.Project, error) {
+	project, err := repository.db.UpdateProject(ctx, projectParams)
+	if err != nil {
+		fmt.Println("error updating project rep: ", err)
+		return database.Project{}, err
+	}
+
+	return project, nil
+}
+
+func (repository *SqlProjectRepository) DeleteProject(ctx context.Context, projectId uuid.UUID) error {
+	err := repository.db.DeleteProject(ctx, projectId)
+	if err != nil {
+		fmt.Println("error deleting project rep: ", err)
+		return err
+	}
+
+	return nil
+}
