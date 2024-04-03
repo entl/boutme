@@ -20,3 +20,12 @@ type ProjectResponseDTO struct {
 	GithubUrl   string    `json:"github_url" mapstructure:"GithubUrl" validate:"required"`
 	TechStack   []string  `json:"tech_stack" mapstructure:"TechStack" validate:"required"`
 }
+
+type ProjectUpdateDTO struct {
+	ID          uuid.UUID `json:"id" mapstructure:"ID"`
+	Name        string    `json:"name" mapstructure:"Name"`
+	Description string    `json:"description" mapstructure:"Description"`
+	ImageUrl    string    `json:"image_url" mapstructure:"ImageUrl"`
+	GithubUrl   string    `json:"github_url" mapstructure:"GithubUrl"`
+	TechStack   []string  `json:"tech_stack" mapstructure:"TechStack"`
+}
