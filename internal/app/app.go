@@ -71,8 +71,11 @@ func New() (*App, error) {
 	a.projectHandler = endpoint.NewProjectHandler(a.projectService)
 
 	a.echo.GET("/status", a.healthHandler.Health)
-	a.echo.GET("/projects", a.projectHandler.GetProjects)
 	a.echo.POST("/projects", a.projectHandler.AddProject)
+	a.echo.GET("/projects", a.projectHandler.GetProjects)
+	a.echo.GET("/projects/:id", a.projectHandler.GetProject)
+	a.echo.PUT("/projects/:id", a.projectHandler.UpdateProject)
+	a.echo.DELETE("/projects/:id", a.projectHandler.DeleteProject)
 
 	return a, nil
 }
