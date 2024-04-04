@@ -7,7 +7,52 @@ package database
 
 import (
 	"context"
+	"time"
+
+	"github.com/google/uuid"
 )
+
+const addUser = `-- name: AddUser :one
+INSERT INTO users (id, username, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, password, created_at, updated_at
+`
+
+type AddUserParams struct {
+	ID        uuid.UUID
+	Username  string
+	Password  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+func (q *Queries) AddUser(ctx context.Context, arg AddUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, addUser,
+		arg.ID,
+		arg.Username,
+		arg.Password,
+		arg.CreatedAt,
+		arg.UpdatedAt,
+	)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Password,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const countUsers = `-- name: CountUsers :one
+SELECT COUNT(*) FROM users
+`
+
+func (q *Queries) CountUsers(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countUsers)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
 
 const getUser = `-- name: GetUser :one
 SELECT id, username, password, created_at, updated_at FROM users WHERE username = $1
