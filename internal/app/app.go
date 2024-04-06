@@ -9,6 +9,7 @@ import (
 	"github.com/entl/boutme/internal/service"
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
@@ -16,11 +17,16 @@ import (
 )
 
 type App struct {
-	echo           *echo.Echo
-	healthHandler  *endpoint.HealthHandler
+	echo          *echo.Echo
+	healthHandler *endpoint.HealthHandler
+
 	projectHandler *endpoint.ProjectHandler
 	projectService *service.ProjectService
 	projectRepo    *repository.SqlProjectRepository
+
+	userHandler *endpoint.UserHandler
+	userRepo    *repository.SqlUserRepository
+	userService *service.UserService
 }
 
 type CustomValidator struct {
@@ -58,24 +64,36 @@ func New() (*App, error) {
 	db := database.New(conn)
 
 	a := &App{}
-
 	a.echo = echo.New()
-
 	a.echo.Validator = &CustomValidator{validator: validator.New()}
 
 	a.projectRepo = repository.NewSqlProjectRepository(db)
+	a.userRepo = repository.NewSqlUserRepository(db)
 
 	a.projectService = service.NewProjectService(a.projectRepo)
+	a.userService = service.NewUserService(a.userRepo)
 
 	a.healthHandler = endpoint.NewHealthHandler()
 	a.projectHandler = endpoint.NewProjectHandler(a.projectService)
+	a.userHandler = endpoint.NewUserHandler(a.userService)
 
 	a.echo.GET("/status", a.healthHandler.Health)
-	a.echo.POST("/projects", a.projectHandler.AddProject)
+
+	a.echo.POST("/login", a.userHandler.AuthenticateUser)
+	a.echo.POST("/register", a.userHandler.RegisterUser)
+
 	a.echo.GET("/projects", a.projectHandler.GetProjects)
 	a.echo.GET("/projects/:id", a.projectHandler.GetProject)
-	a.echo.PUT("/projects/:id", a.projectHandler.UpdateProject)
-	a.echo.DELETE("/projects/:id", a.projectHandler.DeleteProject)
+
+	config := echojwt.Config{
+		SigningKey: []byte(os.Getenv("JWT_SECRET")),
+	}
+
+	adminGroup := a.echo.Group("/admin")
+	adminGroup.Use(echojwt.WithConfig(config))
+	adminGroup.POST("/projects", a.projectHandler.AddProject)
+	adminGroup.PUT("/projects/:id", a.projectHandler.UpdateProject)
+	adminGroup.DELETE("/projects/:id", a.projectHandler.DeleteProject)
 
 	return a, nil
 }
