@@ -9,6 +9,7 @@ import (
 	"github.com/entl/boutme/internal/repository"
 	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
+	"time"
 )
 
 type ProjectService struct {
@@ -30,7 +31,10 @@ func (s *ProjectService) AddProject(ctx context.Context, project models.ProjectR
 		fmt.Println("error decoding project: ", err)
 		return models.ProjectResponseDTO{}, errors.New(fmt.Sprintf("error decoding project: %v", err))
 	}
-
+	projectParams.ID = uuid.New()
+	projectParams.CreatedAt = time.Now()
+	projectParams.UpdatedAt = time.Now()
+	
 	projectDb, err := s.projectRepository.CreateProject(ctx, projectParams)
 	if err != nil {
 		fmt.Println("error creating project service: ", err)
