@@ -7,7 +7,7 @@ RETURNING *;
 SELECT * FROM projects WHERE id = $1;
 
 -- name: GetProjects :many
-SELECT * FROM projects;
+SELECT * FROM projects ORDER BY created_at DESC;
 
 -- name: UpdateProject :one
 UPDATE projects
