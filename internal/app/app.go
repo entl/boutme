@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -27,6 +28,8 @@ type App struct {
 	userHandler *endpoint.UserHandler
 	userRepo    *repository.SqlUserRepository
 	userService *service.UserService
+
+	jwtHandler *endpoint.JWTHandler
 }
 
 type CustomValidator struct {
@@ -77,6 +80,13 @@ func New() (*App, error) {
 	a.projectHandler = endpoint.NewProjectHandler(a.projectService)
 	a.userHandler = endpoint.NewUserHandler(a.userService)
 
+	a.jwtHandler = endpoint.NewJWTHandler()
+
+	a.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"*"},
+		AllowCredentials: true,
+	}))
+
 	a.echo.GET("/status", a.healthHandler.Health)
 
 	a.echo.POST("/login", a.userHandler.AuthenticateUser)
@@ -94,6 +104,7 @@ func New() (*App, error) {
 	adminGroup.POST("/projects", a.projectHandler.AddProject)
 	adminGroup.PUT("/projects/:id", a.projectHandler.UpdateProject)
 	adminGroup.DELETE("/projects/:id", a.projectHandler.DeleteProject)
+	adminGroup.GET("", a.jwtHandler.VerifyJWT)
 
 	return a, nil
 }
