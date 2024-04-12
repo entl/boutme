@@ -49,11 +49,6 @@ func New() (*App, error) {
 		log.Fatal("Error loading .env file")
 	}
 
-	portString := os.Getenv("PORT")
-	if portString == "" {
-		log.Fatal("PORT is not set")
-	}
-
 	dbUrl := os.Getenv("DATABASE_URL")
 	if dbUrl == "" {
 		log.Fatal("DATABASE_URL is not set")
@@ -110,10 +105,12 @@ func New() (*App, error) {
 }
 
 func (a *App) Run() error {
+	hostString := os.Getenv("HOST")
+	portString := os.Getenv("PORT")
 
 	fmt.Println("server is running...")
 
-	err := a.echo.Start(":8080")
+	err := a.echo.Start(fmt.Sprintf("%s:%s", hostString, portString))
 	if err != nil {
 		log.Fatal("failed to start server", err)
 	}

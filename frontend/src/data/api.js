@@ -6,7 +6,7 @@ import axios from "axios";
 export  const getProjects = async () => {
 	try {
 		console.log("before request");
-		const response = await axios.get('http://localhost:8080/projects');
+		const response = await axios.get('http://localhost:8080/projects')
 		console.log("sent request", response.data);
 		return response.data;
 	} catch (error) {
