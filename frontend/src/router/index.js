@@ -88,12 +88,17 @@ const routes = [
 				},
 			}
 		],
+	},
+	{
+		path: '/:catchAll(.*)',
+		name: '404',
+		component: () => import(/* webpackChunkName: "404" */ '../views/404.vue'),
 	}
 ];
 
 const router = createRouter({
-	history: createWebHistory(process.env.BASE_URL),
-	routes,
+	history: createWebHistory("/"),
+	routes: [...routes],
 	scrollBehavior() {
 		document.getElementById('app').scrollIntoView();
 	},
