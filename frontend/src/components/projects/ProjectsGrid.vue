@@ -2,7 +2,7 @@
 import feather from 'feather-icons';
 // import ProjectsFilter from './ProjectsFilter.vue';
 import ProjectSingle from './ProjectSingle.vue';
-import {getProjects} from '@/data/projects';
+import {getProjects} from '@/data/api';
 
 export default {
 	components: { ProjectSingle },
@@ -14,7 +14,6 @@ export default {
   },
 	async mounted() {
     this.projects = await getProjects();
-    console.log(this.projects);
 		feather.replace();
 	},
 };

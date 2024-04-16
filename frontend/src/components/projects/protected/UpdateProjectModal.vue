@@ -3,7 +3,7 @@ import feather from 'feather-icons';
 import Button from '../../reusable/Button.vue';
 import FormInput from '../../reusable/FormInput.vue';
 import FormTextarea from '../../reusable/FormTextarea.vue';
-import axios from "axios";
+import {updateProject} from "@/data/api";
 export default {
 	props: ['showModal', 'modal', 'project_in'],
 	components: { Button, FormInput, FormTextarea },
@@ -36,8 +36,7 @@ export default {
   },
 	methods: {
     initializeForm(projectData = this.project_in) {
-      console.log('Project data:', projectData);
-      const techStack = projectData.tech_stack.join(',')
+      const techStack = projectData.tech_stack && projectData.tech_stack.length > 0 ? projectData.tech_stack.join(',') : "";
       if (projectData) {
         this.project = {
           ...this.project,
@@ -45,7 +44,6 @@ export default {
           tech_stack: techStack
         };
       }
-      console.log('Project:', this.project);
     },
     async submitForm() {
       this.$refs.form.requestSubmit();
@@ -53,13 +51,7 @@ export default {
     async submit() {
       try {
         this.project.tech_stack = this.project.tech_stack.split(',');
-        console.log('Form submitted:', this.project);
-        await axios.put(`http://localhost:8080/admin/projects/${this.project.id}`, this.project, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt') // Add the token to the headers
-          }
-        });
+        await updateProject(this.project, localStorage.getItem('jwt'));
       } catch (error) {
         console.error('Adding project failed:', error);
       }

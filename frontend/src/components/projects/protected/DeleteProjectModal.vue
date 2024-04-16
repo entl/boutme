@@ -1,7 +1,7 @@
 <script>
 import feather from 'feather-icons';
 import Button from '../../reusable/Button.vue';
-import axios from "axios";
+import {deleteProject} from "@/data/api";
 export default {
   props: ['showModal', 'modal', 'project_in'],
   components: { Button,},
@@ -14,12 +14,7 @@ export default {
   methods: {
     async deleteProject() {
       try {
-        await axios.delete(`http://localhost:8080/admin/projects/${this.project_in.id}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt') // Add the token to the headers
-          }
-        });
+        await deleteProject(this.project_in.id, localStorage.getItem('jwt'));
         window.location.reload();
       } catch (error) {
         console.error('Adding project failed:', error);

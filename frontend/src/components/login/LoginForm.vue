@@ -1,7 +1,7 @@
 <script>
 import FormInput from "@/components/reusable/FormInput.vue";
 import Button from '@/components/reusable/Button.vue';
-import axios from "axios";
+import {login} from "@/data/api";
 
 export default {
   components: {
@@ -17,17 +17,11 @@ export default {
   methods: {
     async submit() {
       try {
-        console.log('Form submitted:', this.username, this.password);
         const formData = new FormData();
         formData.append('username', this.username);
         formData.append('password', this.password);
-
-        const response = await axios.post('http://localhost:8080/login', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        localStorage.setItem('jwt', response.data.token); // Store the token or auth status
+        const token = await login(formData);
+        localStorage.setItem('jwt', token); // Store the token or auth status
         this.$router.push('/admin/dashboard');
       } catch (error) {
         console.error('Login failed:', error);

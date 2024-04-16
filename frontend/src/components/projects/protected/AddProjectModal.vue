@@ -3,7 +3,7 @@ import feather from 'feather-icons';
 import Button from '../../reusable/Button.vue';
 import FormInput from '../../reusable/FormInput.vue';
 import FormTextarea from '../../reusable/FormTextarea.vue';
-import axios from "axios";
+import {createProject} from "@/data/api";
 export default {
 	props: ['showModal', 'modal'],
 	components: { Button, FormInput, FormTextarea },
@@ -31,13 +31,7 @@ export default {
     async submit() {
       try {
         this.project.tech_stack = this.project.tech_stack.split(',');
-        console.log('Form submitted:', this.project);
-        await axios.post('http://localhost:8080/admin/projects', this.project, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt') // Add the token to the headers
-          }
-        });
+        await createProject(this.project, localStorage.getItem('jwt'));
       } catch (error) {
         console.error('Adding project failed:', error);
       }
