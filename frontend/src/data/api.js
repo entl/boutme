@@ -1,56 +1,74 @@
-// Projects data.
-// Note: Here we are getting data from a js file, but in a different project I'll be fetching these projects from some srt of APIs.
-
 import axios from "axios";
 
-export  const getProjects = async () => {
+export const getProjects = async () => {
 	try {
-		console.log("before request");
-		const response = await axios.get('http://localhost:8080/projects')
-		console.log("sent request", response.data);
+		const response = await axios.get(`${process.env.VUE_APP_API_URL}/projects`)
 		return response.data;
 	} catch (error) {
-		console.error(error);
+		console.error("Get Projects Error", error);
 	}
 }
 
-// const projects = [
-// 	{
-// 		id: 1,
-// 		title: 'Google Health Platform',
-// 		category: 'Web Application',
-// 		img: require('@/assets/images/web-project-2.jpg'),
-// 	},
-// 	{
-// 		id: 2,
-// 		title: 'Phoenix Digital Agency',
-// 		category: 'Mobile Application',
-// 		img: require('@/assets/images/mobile-project-2.jpg'),
-// 	},
-// 	{
-// 		id: 3,
-// 		title: 'Project Management UI',
-// 		category: 'UI/UX Design',
-// 		img: require('@/assets/images/ui-project-1.jpg'),
-// 	},
-// 	{
-// 		id: 4,
-// 		title: 'Cloud Storage Platform',
-// 		category: 'UI/UX Design',
-// 		img: require('@/assets/images/ui-project-2.jpg'),
-// 	},
-// 	{
-// 		id: 5,
-// 		title: 'React Social App',
-// 		category: 'Mobile Application',
-// 		img: require('@/assets/images/mobile-project-1.jpg'),
-// 	},
-// 	{
-// 		id: 6,
-// 		title: 'Apple Design System',
-// 		category: 'Web Application',
-// 		img: require('@/assets/images/web-project-1.jpg'),
-// 	},
-// ];
-//
-// export default projects;
+export const getProject = async (id) => {
+	try {
+		const response = await axios.get(`${process.env.VUE_APP_API_URL}/${id}`)
+		return response.data;
+	} catch (error) {
+		console.error("Get Project Error", error);
+	}
+}
+
+export const createProject = async (project, jwt) => {
+	try {
+		await axios.post(`${process.env.VUE_APP_API_URL}/admin/projects`, project, {
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + jwt// Add the token to the headers
+			}
+		});
+	}
+	catch (error) {
+		console.error("Error creating project", error);
+	}
+}
+
+export const updateProject = async (project, jwt) => {
+	try {
+		await axios.put(`${process.env.VUE_APP_API_URL}/admin/projects/${project.id}`, project, {
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + jwt // Add the token to the headers
+			}
+		});
+	}
+	catch (error) {
+		console.error("Error updating project", error);
+	}
+}
+
+export const deleteProject = async (id, jwt) => {
+	try {
+		await axios.delete(`${process.env.VUE_APP_API_URL}/admin/projects/${id}`, {
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + jwt // Add the token to the headers
+			}
+		});
+	}
+	catch (error) {
+		console.error("Error deleting project", error);
+	}
+}
+
+export const login = async (formData) => {
+	try {
+		const response = await axios.post(`${process.env.VUE_APP_API_URL}/login`, formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			}
+		});
+		return response.data.token
+	} catch (error) {
+		console.error('Login failed:', error);
+	}
+}

@@ -3,7 +3,7 @@ import AddProjectModal from "@/components/projects/protected/AddProjectModal.vue
 import Button from '@/components/reusable/Button.vue';
 import feather from "feather-icons";
 import ProjectSingle from "@/components/projects/protected/ProjectSingle.vue";
-import {getProjects} from "@/data/projects";
+import {getProjects} from "@/data/api";
 
 export default {
   components: {
@@ -18,19 +18,12 @@ export default {
       projects: null,
     };
   },
-  created() {
-    this.theme = localStorage.getItem('theme') || 'light';
-  },
   async mounted() {
-    feather.replace();
     this.theme = localStorage.getItem('theme') || 'light';
     this.projects = await getProjects();
     feather.replace();
   },
   methods: {
-    updateTheme(theme) {
-      this.theme = theme;
-    },
     showModal() {
       if (this.modal) {
         // Stop screen scrolling
@@ -45,9 +38,6 @@ export default {
         this.modal = true;
       }
     },
-  },
-  updated() {
-    feather.replace();
   },
 };
 </script>
