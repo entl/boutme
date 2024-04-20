@@ -1,0 +1,74 @@
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - MIGRATION_DB_URL=${MIGRATION_DB_URL}
+      - GOOSE_DRIVER=postgres
+    ports:
+      - "8080:8080"
+    command: "sh -c \"goose -dir sql/schema ${MIGRATION_DB_URL} up && ./bin/main\""
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
+      - backend
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped
+    depends_on:
+        - api
+    networks:
+      - backend
+
+  certbot:
+    image: certbot/certbot
+    env_file:
+      - .env
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email {EMAIL} -d {DOMAIN} --agree-tos
+
+
+  postgres:
+    image: postgres:12
+    ports:
+      - "5433:5432"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - postgres_boutme_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB' | sh"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+networks:
+  backend:
+
+volumes:
+  postgres_boutme_data:
