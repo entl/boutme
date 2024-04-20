@@ -114,7 +114,7 @@ router.beforeEach(async (to, from, next) => {
 		next({ name: 'Login' });
 	}
 	else if (requiresAuth && jwtTokenLocal) {
-		const response = await axios.get('http://localhost:8080/admin',
+		const response = await axios.get(`${process.env.VUE_APP_API_URL}/admin`,
 			{
 				headers: {
 					Authorization: `Bearer ${jwtTokenLocal}`,
