@@ -54,6 +54,16 @@ func New() (*App, error) {
 		log.Fatal("DATABASE_URL is not set")
 	}
 
+	frontendOrigin := os.Getenv("FRONTEND_ORIGIN")
+	if frontendOrigin == "" {
+		log.Fatal("FRONTEND_ORIGIN is not set")
+	}
+
+	frontendUrl := os.Getenv("FRONTEND_URL")
+	if frontendUrl == "" {
+		log.Fatal("FRONTEND_URL is not set")
+	}
+
 	conn, err := sql.Open("postgres", dbUrl)
 	if err != nil {
 		log.Fatal("Cannot connect to DB", err)
@@ -63,6 +73,12 @@ func New() (*App, error) {
 
 	a := &App{}
 	a.echo = echo.New()
+	a.echo.Use(middleware.Logger())
+	a.echo.Use(middleware.Recover())
+	a.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{frontendOrigin, frontendUrl},
+		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
+	}))
 	a.echo.Validator = &CustomValidator{validator: validator.New()}
 
 	a.projectRepo = repository.NewSqlProjectRepository(db)
