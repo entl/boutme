@@ -10,6 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"os"
 	"time"
 )
 
@@ -34,13 +35,12 @@ func (s *UserService) AuthenticateUser(ctx context.Context, username string, pas
 		return models.UserJWTResponseDTO{}, err
 	}
 
-	claims := jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15))}
+	claims := jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 60))}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	// CHANGE LATER
-	tokenString, err := token.SignedString([]byte("secret"))
+	tokenString, err := token.SignedString(os.Getenv("JWT_SECRET"))
 	if err != nil {
-		fmt.Println("error signing token: ", err)
+		fmt.Println("error signing tokcen: ", err)
 		return models.UserJWTResponseDTO{}, err
 	}
 
