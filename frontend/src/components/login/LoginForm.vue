@@ -20,7 +20,9 @@ export default {
         const formData = new FormData();
         formData.append('username', this.username);
         formData.append('password', this.password);
+        console.log('Form data:', formData)
         const token = await login(formData);
+        console.log('AFTER LOGIN ATTEMPS LOGING FORM:', token);
         localStorage.setItem('jwt', token); // Store the token or auth status
         this.$router.push('/admin/dashboard');
       } catch (error) {

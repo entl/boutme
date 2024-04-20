@@ -67,6 +67,9 @@ export const login = async (formData) => {
 				'Content-Type': 'multipart/form-data'
 			}
 		});
+		console.log('After login:', response.data);
+		console.log('Response Headers:', response.headers);
+		console.log('Request:', response.request);
 		return response.data.token
 	} catch (error) {
 		console.error('Login failed:', error);
