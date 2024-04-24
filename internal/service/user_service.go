@@ -37,8 +37,7 @@ func (s *UserService) AuthenticateUser(ctx context.Context, username string, pas
 
 	claims := jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 60))}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	tokenString, err := token.SignedString(os.Getenv("JWT_SECRET"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		fmt.Println("error signing tokcen: ", err)
 		return models.UserJWTResponseDTO{}, err
