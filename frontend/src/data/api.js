@@ -61,14 +61,24 @@ export const deleteProject = async (id, jwt) => {
 }
 
 export const login = async (formData) => {
+	return await axios.post(`${process.env.VUE_APP_API_URL}/login`, formData, {
+		headers: {
+			'Content-Type': 'multipart/form-data'
+		}
+	})
+
+}
+
+export const refreshToken = async (jwt) => {
 	try {
-		const response = await axios.post(`${process.env.VUE_APP_API_URL}/login`, formData, {
+		const response = await axios.get(`${process.env.VUE_APP_API_URL}/auth/refresh`, {
 			headers: {
-				'Content-Type': 'multipart/form-data'
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + jwt // Add the token to the headers
 			}
-		});
+		})
 		return response.data.token
 	} catch (error) {
-		console.error('Login failed:', error);
+		console.error("Token refresh failed", error)
 	}
 }
