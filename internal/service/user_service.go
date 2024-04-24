@@ -7,7 +7,6 @@ import (
 	"github.com/entl/boutme/internal/database"
 	"github.com/entl/boutme/internal/models"
 	"github.com/entl/boutme/internal/repository"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -15,6 +14,7 @@ import (
 
 type UserService struct {
 	userRepository *repository.SqlUserRepository
+	authService    *AuthService
 }
 
 func NewUserService(userRepository *repository.SqlUserRepository) *UserService {
@@ -34,15 +34,7 @@ func (s *UserService) AuthenticateUser(ctx context.Context, username string, pas
 		return models.UserJWTResponseDTO{}, err
 	}
 
-	claims := jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15))}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	// CHANGE LATER
-	tokenString, err := token.SignedString([]byte("secret"))
-	if err != nil {
-		fmt.Println("error signing token: ", err)
-		return models.UserJWTResponseDTO{}, err
-	}
+	tokenString, err := s.authService.IssueJWT()
 
 	return models.UserJWTResponseDTO{Token: tokenString}, nil
 }

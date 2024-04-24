@@ -78,15 +78,6 @@ const routes = [
 					title: 'Maksym - Dashboard',
 				},
 			},
-			{
-				path: "hui",
-				name: "Hui",
-				component: () => import(/* webpackChunkName: "hui" */ '../protected/Hui.vue'),
-				meta: {
-					requiresAuth: true,
-					title: 'Maksym - Hui',
-				},
-			}
 		],
 	},
 	{
@@ -103,7 +94,6 @@ const router = createRouter({
 		document.getElementById('app').scrollIntoView();
 	},
 });
-
 export default router;
 
 router.beforeEach(async (to, from, next) => {
@@ -114,7 +104,7 @@ router.beforeEach(async (to, from, next) => {
 		next({ name: 'Login' });
 	}
 	else if (requiresAuth && jwtTokenLocal) {
-		const response = await axios.get('http://localhost:8080/admin',
+		const response = await axios.get(`${process.env.VUE_APP_API_URL}/auth`,
 			{
 				headers: {
 					Authorization: `Bearer ${jwtTokenLocal}`,
