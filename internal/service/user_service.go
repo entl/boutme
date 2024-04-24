@@ -7,15 +7,14 @@ import (
 	"github.com/entl/boutme/internal/database"
 	"github.com/entl/boutme/internal/models"
 	"github.com/entl/boutme/internal/repository"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"os"
 	"time"
 )
 
 type UserService struct {
 	userRepository *repository.SqlUserRepository
+	authService    *AuthService
 }
 
 func NewUserService(userRepository *repository.SqlUserRepository) *UserService {
@@ -35,13 +34,7 @@ func (s *UserService) AuthenticateUser(ctx context.Context, username string, pas
 		return models.UserJWTResponseDTO{}, err
 	}
 
-	claims := jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 60))}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
-	if err != nil {
-		fmt.Println("error signing tokcen: ", err)
-		return models.UserJWTResponseDTO{}, err
-	}
+	tokenString, err := s.authService.IssueJWT()
 
 	return models.UserJWTResponseDTO{Token: tokenString}, nil
 }

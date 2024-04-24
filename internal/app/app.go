@@ -29,7 +29,8 @@ type App struct {
 	userRepo    *repository.SqlUserRepository
 	userService *service.UserService
 
-	jwtHandler *endpoint.JWTHandler
+	jwtHandler  *endpoint.JWTHandler
+	authService *service.AuthService
 }
 
 type CustomValidator struct {
@@ -86,12 +87,13 @@ func New() (*App, error) {
 
 	a.projectService = service.NewProjectService(a.projectRepo)
 	a.userService = service.NewUserService(a.userRepo)
+	a.authService = service.NewAuthService()
 
 	a.healthHandler = endpoint.NewHealthHandler()
 	a.projectHandler = endpoint.NewProjectHandler(a.projectService)
 	a.userHandler = endpoint.NewUserHandler(a.userService)
 
-	a.jwtHandler = endpoint.NewJWTHandler()
+	a.jwtHandler = endpoint.NewJWTHandler(a.authService)
 
 	a.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"*"},
@@ -115,7 +117,11 @@ func New() (*App, error) {
 	adminGroup.POST("/projects", a.projectHandler.AddProject)
 	adminGroup.PUT("/projects/:id", a.projectHandler.UpdateProject)
 	adminGroup.DELETE("/projects/:id", a.projectHandler.DeleteProject)
-	adminGroup.GET("", a.jwtHandler.VerifyJWT)
+
+	authGroup := a.echo.Group("/auth")
+	authGroup.Use(echojwt.WithConfig(config))
+	authGroup.GET("", a.jwtHandler.VerifyJWT)
+	authGroup.GET("/refresh", a.jwtHandler.RefreshJWT)
 
 	return a, nil
 }
