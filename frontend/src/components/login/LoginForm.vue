@@ -20,11 +20,12 @@ export default {
         const formData = new FormData();
         formData.append('username', this.username);
         formData.append('password', this.password);
-        const token = await login(formData);
-        localStorage.setItem('jwt', token); // Store the token or auth status
+        const response = await login(formData);
+        localStorage.setItem('jwt', response.data.token); // Store the token or auth status
         this.$router.push('/admin/dashboard');
       } catch (error) {
-        console.error('Login failed:', error);
+        alert("Wrong username or password")
+        console.error('Login failed FORM:', error);
       }
     }
   }
