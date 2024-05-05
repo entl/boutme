@@ -6,13 +6,18 @@ export default {
 				{
 					id: 1,
 					bio:
-            "Here is supposed to be about me section. Will be added later. Check https://github.com/entl"
+            "I'm a highly motivated Software Engineering student at Anglia Ruskin University (88/100 GPA) with a proven track record of translating real-world experience into measurable results."
 				},
 				{
 					id: 2,
 					bio:
-						'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil vel illum asperiores dignissimos cumque quibusdam et fugiat voluptatem nobis suscipit explicabo, eaque consequatur nesciunt, fugit eligendi corporis laudantium adipisci soluta?',
+						"I possess a robust foundation in Python, GoLang, Java, JavaScript/TypeScript, various databases (PostgreSQL, MongoDB, Redis), and frameworks such as FastAPI, Echo, Spring MVC, React, and Vue. My passion for continuous learning is evident in certifications and my consistent academic excellence.",
 				},
+                  {
+          id: 3,
+          bio:
+            "I thrive in collaborative, fast-paced settings and I'm seeking opportunities to apply my skills, adaptability, and results-driven mindset to contribute to impactful software projects. Let's connect!"
+        },
 			],
 		};
 	},
