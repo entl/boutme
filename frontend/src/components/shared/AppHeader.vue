@@ -1,14 +1,13 @@
 <script>
 import ThemeSwitcher from '../ThemeSwitcher';
-import HireMeModal from '../HireMeModal.vue';
 import feather from 'feather-icons';
 import AppHeaderLinks from './AppHeaderLinks.vue';
 import Button from '../reusable/Button.vue';
+import {socialLinks} from "@/data/socialLinks";
 
 export default {
 	components: {
 		ThemeSwitcher,
-		HireMeModal,
 		AppHeaderLinks,
 		Button,
 	},
@@ -17,28 +16,7 @@ export default {
 			isOpen: false,
 			theme: '',
 			modal: false,
-			categories: [
-				{
-					id: 1,
-					value: 'web',
-					name: 'Web Application',
-				},
-				{
-					id: 2,
-					value: 'mobile',
-					name: 'Mobile Application',
-				},
-				{
-					id: 3,
-					value: 'ui-ux',
-					name: 'UI/UX Design',
-				},
-				{
-					id: 4,
-					value: 'branding',
-					name: 'Branding & Anim',
-				},
-			],
+      linkedIn: socialLinks[2].url
 		};
 	},
 
@@ -144,12 +122,13 @@ export default {
 			>
 				<!-- Hire me button -->
 				<div class="hidden md:block">
-					<Button
-						title="Hire Me"
-						class="text-md font-general-medium bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm rounded-md px-5 py-2.5 duration-300"
-						@click="showModal()"
-						aria-label="Hire Me Button"
-					/>
+          <a :href="linkedIn" target="_blank" rel="noopener noreferrer">
+            <Button
+              title="Hire Me"
+              class="text-md font-general-medium bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm rounded-md px-5 py-2.5 duration-300"
+              aria-label="Hire Me Button"
+            />
+          </a>
 				</div>
 
 				<!-- Theme switcher large screen -->
@@ -160,14 +139,6 @@ export default {
 				/>
 			</div>
 		</div>
-
-		<!-- Hire me modal -->
-		<HireMeModal
-			:showModal="showModal"
-			:modal="modal"
-			:categories="categories"
-			aria-modal="Hire Me Modal"
-		/>
 	</nav>
 </template>
 

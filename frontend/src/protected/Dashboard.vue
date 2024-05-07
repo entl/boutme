@@ -38,6 +38,9 @@ export default {
         this.modal = true;
       }
     },
+    async RefreshTokenTimeOut() {
+
+    }
   },
 };
 </script>
