@@ -42,6 +42,8 @@ Experience the portfolio in action at [https://maksym-vorobyov.me](https://maksy
 * **`backend/`:** GoLang source code
 * **`docker-compose.yml`:** Configuration for running the app in Docker containers
 
+**Connect with Me**
+
 * [LinkedIn](https://www.linkedin.com/in/maksym-vorobyov/)
 
 **Feedback**
@@ -49,4 +51,4 @@ Experience the portfolio in action at [https://maksym-vorobyov.me](https://maksy
 I welcome your feedback and contributions! Feel free to open issues or submit pull requests
 
 **License**
-MIT
+[MIT](https://choosealicense.com/licenses/mit/)
